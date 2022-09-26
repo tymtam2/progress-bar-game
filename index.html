@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Guess the progress</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body style="background-color:black;">
+
+
+
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <!-- <script src="" async defer></script> -->
+    <script type="text/javascript">
+
+        // current epoch
+        var seed =  new Date().getTime() / 1000;
+
+        // https://stackoverflow.com/a/19303725/581076 by Antti Kissaniemi
+        function random() {
+            var x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+        }
+
+        yourFunction = function () {
+            var random_percent = Math.round(random() * 100);
+
+            //random_percent = 98;
+            var bar = "";
+            for (let i = 0; i < 100; i++) {
+                if (i < random_percent) {
+                    bar += "█";//"█ ▓ ▒ ░ " ▇ █ ▉ ▊ ▋ ▌ ▍ ▎ ▏ ▐
+                }
+                else {
+                    bar += "░";
+                }
+            }
+            document.getElementById('progress_bar').innerText = bar;
+            document.getElementById('progress_bar2').innerText = bar;
+            document.getElementById('progress_bar3').innerText = bar;
+            document.getElementById('progress_bar_answer').innerText = random_percent;
+        }
+
+        window.onload = function () {
+            yourFunction();
+        };
+        // document.getElementById('on_click_guess').addEventListener("click", function (event) {
+        //     (function (event) {
+        //         alert(this);
+        //     }).call(document.getElementById('click_me'), event);
+        // });
+
+
+    </script>
+    <div class="mono-font">
+        <nav>
+
+            <a href="https://github.com/tymtam2/TODO">->source</a>
+            <a href="https://twitter.com/tymtam4">->twitter</a>
+            <div class="overflow-hidden max-width-100 xxxwhitespace-nowrap opacity-90">
+                ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+            </div>
+        </nav>
+
+        <main>
+            <div style=" border:1px solid red;" class="width-100pc justify-center text-align-center">
+                <p>What's the progress?</p>
+                <p style="display: none;" id="progress_bar" class="progress-bar"></p> 
+                <p></p>
+                <div  class="progress-bar2-div"><label id="progress_bar2" class="progress-bar2-label"/></label></div>   
+                <p></p>
+                <div style="display: none;"> <label id="progress_bar3" class="progress-bar3"/></div>
+                <div id="progress_bar_answer"></div>
+            </div>
+
+        </main>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+body {
+    color: white;
+}
+
+a:link {
+    color: white;
+    text-decoration: none;
+}
+
+/* visited link */
+a:visited {
+    color: white;
+    text-decoration: none;
+}
+
+.width-100pc {
+    width: 100%
+}
+
+.center {
+    margin: auto;
+    _border: 3px solid green;
+    _padding: 10px;
+}
+
+.progress-bar {
+    transform: scaleX(0.6);
+
+    border: 2px solid;
+}
+
+.progress-bar2-div {
+    aborder: 1px solid pink;
+    transform: scale(0.6, 2);
+}
+
+.progress-bar2-label {
+    border: 1px darkgreen ;
+    font-size: 1.5vw;
+}
+
+.justify-center {
+    justify-content: center
+}
+
+.text-align-center {
+    text-align: center;
+}
+
+.mono-font {
+    font-family: monospace;
+}
+
+.align-itmes-center {
+    align-items: center;
+}
+
+
+.overflow-hidden {
+    overflow: hidden
+}
+
+
+.opacity-90 {
+    opacity: .9
+}
+
+.opacity-20 {
+    opacity: .2
+}
+
+
+.max-width-100 {
+    max-width: 100%
+}
+
+.whitespace-nowrap {
+    white-space: nowrap
+}
