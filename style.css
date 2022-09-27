@@ -31,7 +31,7 @@ a:visited {
 
 .progress-bar2-div {
     aborder: 1px solid pink;
-    transform: scale(0.6, 2);
+    atransform: scale(0.6, 2);
 }
 
 .progress-bar2-label {
