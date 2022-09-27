@@ -1,6 +1,6 @@
 # Progress.bar's TODO 
 
-1  Ascii -> div progress bar (maybe). This is because with ascii 98% bar is just too easy :)
+1  ✅ Ascii -> div progress bar (maybe). This is because with ascii 98% bar is just too easy :)
 1. Build the web server 
    1. https://doc.rust-lang.org/book/ch20-00-final-project-a-web-server.html
 2. Add sql 

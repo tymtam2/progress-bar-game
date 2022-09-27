@@ -24,19 +24,13 @@ a:visited {
 }
 
 .progress-bar {
-    transform: scaleX(0.6);
-
-    border: 2px solid;
+    border: 1px solid;
 }
 
-.progress-bar2-div {
-    aborder: 1px solid pink;
-    atransform: scale(0.6, 2);
-}
-
-.progress-bar2-label {
-    border: 1px darkgreen ;
-    font-size: 1.5vw;
+.progress-bar-filled {
+    background-color: azure;
+    width: 50%;
+    aborder: 1px solid;
 }
 
 .justify-center {

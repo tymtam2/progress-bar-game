@@ -69,13 +69,21 @@ function random() {
 
 // https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 // by 42 users, 10% Code Spy 
-function getUserFromQueryString() {
+function getQueryString() {
     const params = new Proxy(new URLSearchParams(window.location.search), {
         get: (searchParams, prop) => searchParams.get(prop),
         });
-    // Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
-    let value = params.u; // "some_value"
-    return value;
+    return params;
+    }
+
+function getUserFromQueryString()
+{
+    return getQueryString().u;
+}
+
+function isRandom()
+{
+    return getQueryString().r == "1";
 }
 
 function getUserFromCookie() {
@@ -86,11 +94,17 @@ function getUserId()
 {
     var userId = getUserFromQueryString();
     
-    if(userId !== null && userId !== undefined && userId != "")
+    if(userId !== null && userId !== undefined)
     {
-        console.log("From query string");
+        if(userId != "")
+        {
+            console.log("From query string");
+            createCookie("user_id", userId);
+            return userId;
+        }
+        
+        var userId = Math.random() + '';
         createCookie("user_id", userId);
-        return userId;
     }
 
     userId = getUserFromCookie();
@@ -105,33 +119,27 @@ function getUserId()
 }
 
 start = function () {
-
-        // current epoch
-       
-
-        let userId = getUserId();
-
-        document.getElementById('user_id').innerText = userId;
+    let userId = getUserId();
+    document.getElementById('user_id').innerText = userId;
     
-
-
+    if(isRandom())
+    {
+        // Current epoch
+        seed = new Date().getTime() / 1000;
+    }
+    else 
+    {
+        var d = new Date();
+        seed = d.getFullYear() * 1000 + d.getMonth() * 100 + d.getDay();
+    }
 
     progress_percent = Math.round(random() * 100);
 
-    //progress_percent = 98;
-    var bar = "";
-    for (let i = 0; i < 100; i++) {
-        if (i < progress_percent) {
-            bar += "█";//"█ ▓ ▒ ░ " ▇ █ ▉ ▊ ▋ ▌ ▍ ▎ ▏ ▐
-        }
-        else {
-            bar += "░";
-        }
-    }
-    document.getElementById('progress_bar').innerText = bar;
-    document.getElementById('progress_bar2').innerText = bar;
-    document.getElementById('progress_bar3').innerText = bar;
+    document.getElementById('progress_bar-filled').style.width = progress_percent + '%';
     document.getElementById('progress_bar_answer').innerText = progress_percent + "%";
+
+    var guess_input = document.getElementById('guess_input')
+    guess_input.focus();
 }
 
 window.onload = function () { start(); };
@@ -168,6 +176,7 @@ function add_guessed_row(guessed_percent)
             ? '✅'
             : guessed_percent < progress_percent ? '⬆️' : '⬇️';
         cell3.innerHTML = howCloseText;
+        cell3.style.textAlign = "left";
         row.appendChild(cell1);
         row.appendChild(cell2);
         row.appendChild(cell3);
@@ -203,8 +212,8 @@ function on_click_guess() {
 </script>
 <div class="mono-font">
 <nav>
-    <a href="/">>home</a>
-    <a href="https://github.com/tymtam2/progress-bar-game">->source</a>
+    <a href="/">/</a>
+    <a href="https://github.com/tymtam2/progress-bar-game">->src</a>
     <a href="https://twitter.com/tymtam4">->twitter</a>
     <a href="https://www.buymeacoffee.com/tmaj">->support_this</a>
     <a href="help.html">>help</a>
@@ -217,11 +226,7 @@ function on_click_guess() {
 <main>
 <div astyle=" border:1px solid red;" class="width-100pc justify-center text-align-center">
     <p>What's the progress?</p>
-    <p style="display: none;" id="progress_bar" class="progress-bar"></p> 
-    <p></p>
-    <div style="display: block;" class="progress-bar2-div"><label id="progress_bar2" class="progress-bar2-label"/></label></div>   
-    <p></p>
-    <div style="display: none;"> <label id="progress_bar3" class="progress-bar3"/></div>
+    <div id="progress_bar" class="progress-bar"><div id="progress_bar-filled" class="progress-bar-filled"> &NonBreakingSpace;</div> </div>
     <p/>
     <p>
     <div style="visibility: hidden" id="progress_bar_answer_div">> <label id="progress_bar_answer"></label> <</div>
