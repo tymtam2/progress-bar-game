@@ -32,18 +32,29 @@
                 ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================
             </div>
         </nav>
-        <p/>
+        <p></p>
         <main>
-           <p>1. <B>User id</B><BR>
-              To take your user id to another device (to get the stats):
-                 <ol>
-                 <li> On the original device, add `?show_pk` to the url.</li>
-                 <li> Copy the private key (user id) </li>
-                 <li> On the new device, add `?pk=private_key_here` to url. This will save the user id into a cookie so you need to do this only once. 
-                      Next time you can just go to the normal url without the `?pk=` part.</li>
+            <ol>
+                <li>
+                    <B>User id shows 'INSECURE'</B><BR>
+                    <p>The length of the user id is the only thing that stops others from being able to impersonate you.</p>
+                    <p>If your user name is short then someone else - on purpose, or accidentally, could access your stats.</p> 
+                    <p>To generate a new and secure user id please append `?pk=` to the url. 
+                    After this `?pk=` part is not needed.</p>
+                </li>
+                <li><B>Migrating user id</B><BR>
+                    <p>To take your user id to another device (to get the stats):</p>
+                <ol>
+                    <li> On the original device, add `?show_pk` to the url.</li>
+                    <li> Copy the private key (user id) </li>
+                    <li> On the new device, add `?pk=private_key_here` to url. This will save the user id into a cookie
+                        and this needs to be done only once.
+                        After this `?pk=` part is not needed.</li>
                 </ol>
-               </p>
-            
+                </li>
+            </ol>
+
+
         </main>
     </div>
 </body>

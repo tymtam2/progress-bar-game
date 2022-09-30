@@ -16,40 +16,52 @@
 
 <body style="background-color:black;">
 
-    
-<div class="mono-font">
-<nav>
-    <a href="/">/</a>
-    <a href="https://github.com/tymtam2/progress-bar-game">->src</a>
-    <a href="https://twitter.com/tymtam4">->twitter</a>
-    <a href="https://www.buymeacoffee.com/tmaj">->support_this</a>
-    <a href="help.html">>help</a>
-    <div class="overflow-hidden max-width-100 xxxwhitespace-nowrap opacity-90">
-        ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-    </div>
-</nav>
-    <div>User id: <label id = "user_id_ui"></label></div>
-    <div>Mode: <label id = "mode_ui"></label> (><a id="mode_ui_link" href="a">X</a>)</div> 
-<main>
-<div class="width-100pc justify-center text-align-center">
-    <p>How far are we?</p>
-    <div id="progress_bar" class="progress-bar"><div id="progress_bar-filled" class="progress-bar-filled"> &NonBreakingSpace;</div> </div>
-    <p></p>
-    <p>
-    <div style="visibility: hidden" id="progress_bar_answer_div" class="progress_bar_answer"><label id="progress_bar_answer">&nbsp;</label></div>
-    </p>
-    <div class="guess_div">
-        <input type="number" id="guess_input" class="guess-input" step="1" min="0" maxlength="2" max="100" onkeypress="guess_input_onkeypress(event)"/>
-        <label class="guess-input-percent">%&nbsp;</label>
-        <button id="guess_button" onclick="on_click_guess()">Try</button>
-    </div>
-    <div>Attempt <label id="attempt">1</label> of 3</div>
-    <table id="guesses_table"><tbody></tbody></table>
-</div>
-</main>
-</div>
 
-<!--[if lt IE 7]>
+    <div class="mono-font">
+        <nav>
+            <a href="/">/</a>
+            <a href="https://github.com/tymtam2/progress-bar-game">->src</a>
+            <a href="https://twitter.com/tymtam4">->twitter</a>
+            <a href="https://www.buymeacoffee.com/tmaj">->support_this</a>
+            <a href="help.html">>help</a>
+            <div class="overflow-hidden max-width-100 xxxwhitespace-nowrap opacity-90">
+                ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+            </div>
+        </nav>
+        <div id="main_warning" class="warning" style="visibility: hidden"></div>
+        <div>
+            User id:
+            <label id="user_id_ui"></label>
+            <label id="user_id_insecure_note" style="visibility: hidden" class="user-id-insecure-note">(INSECURE, see:
+                <a href="help.html">>help</a>)</label>
+        </div>
+        <div>Mode: <label id="mode_ui"></label> (><a id="mode_ui_link" href="a">X</a>)</div>
+        <main>
+            <div class="width-100pc justify-center text-align-center">
+                <p>How far are we?</p>
+                <div id="progress_bar" class="progress-bar">
+                    <div id="progress_bar-filled" class="progress-bar-filled"> &NonBreakingSpace;</div>
+                </div>
+                <p></p>
+                <p>
+                <div style="visibility: hidden" id="progress_bar_answer_div" class="progress_bar_answer"><label
+                        id="progress_bar_answer">&nbsp;</label></div>
+                </p>
+                <div class="guess_div">
+                    <input type="number" id="guess_input" class="guess-input" step="1" min="0" maxlength="2" max="100"
+                        onkeypress="guess_input_onkeypress(event)" />
+                    <label class="guess-input-percent">%&nbsp;</label>
+                    <button id="guess_button" onclick="on_click_guess()">Try</button>
+                </div>
+                <div>Attempt <label id="attempt">1</label> of 3</div>
+                <table id="guesses_table">
+                    <tbody></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
@@ -61,8 +73,8 @@
             date: new Date().getDate(),
             guesses: []
         }
-        
-        
+
+
         // https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie-with-javascript
         // by Srinivas Sabbani
         // with modifications
@@ -78,7 +90,7 @@
             }
             document.cookie = name + "=" + value + expires + "; path=/" + ";SameSite=Strict";
         }
-        
+
         // https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie-with-javascript
         // by Srinivas Sabbani
         function getCookie(c_name) {
@@ -94,185 +106,212 @@
                 }
             }
             return "";
-        } 
-        
+        }
+
         // https://stackoverflow.com/a/19303725/581076 by Antti Kissaniemi
         function repeatableRandom(seed) {
             var x = Math.sin(seed++) * 10000;
             return x - Math.floor(x);
         }
-        
+
         // https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
         // by 42 users, 10% Code Spy 
         function getQueryString() {
             const params = new Proxy(new URLSearchParams(window.location.search), {
                 get: (searchParams, prop) => searchParams.get(prop),
-                });
+            });
             return params;
-            }
-        
-        function getUserPrivateKeyFromQueryString()
-        {
-            return getQueryString().pk;
-        }
-        
-        function isRandom()
-        {
-            return getQueryString().r == "1";
         }
 
-        function showFullPrivateKey()
-        {
+        function getUserPrivateKeyFromQueryString() {
+            return getQueryString().pk;
+        }
+
+        function isRandom() {
+            return getQueryString().r == "1" || window.location.href.includes("random.html");
+        }
+
+        //from https://stackoverflow.com/questions/1634748/how-can-i-delete-a-query-string-parameter-in-javascript
+        //by community wiki
+        // 7 revs, 7 users 52% bobince
+        // with modifications (to extract the value of the param)
+        function removeURLParameter(url, parameter) {
+            
+            var parameterValue = null;
+            //prefer to use l.search if you have a location/link object
+            var urlparts = url.split('?');
+            parsAll = [];
+            urlparts.slice(1).forEach(part => {
+                var prefix = encodeURIComponent(parameter) + '=';
+                var pars = part.split(/[&;]/g);
+        
+                for (var i = 0; i < pars.length;i++) {
+                    //idiom for string.startsWith
+                    if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                        parameterValue = pars[i].substring(prefix.length);
+                    }
+                    else
+                    {
+                        parsAll.push(pars[i])
+                    }
+                }
+            });
+            return [urlparts[0] + (parsAll.length > 0 ? '?' + parsAll.join('&') : ''), parameterValue];
+        }
+
+        function showFullPrivateKey() {
             var showUserPK = getQueryString().show_pk;
             return showUserPK !== null && showUserPK !== undefined;
         }
-        
+
         function getUserFromCookie() {
             return getCookie("user_private_key");
         }
-        
-        function getUserPrivateKey()
-        {
-            var userPrivateKey = getUserPrivateKeyFromQueryString();
-            if(userPrivateKey !== null && userPrivateKey !== undefined)
-            { // Set user id
-                if(userPrivateKey == getUserFromCookie())
-                {
-                    // nothing to do
-                    return userPrivateKey;
-                }
 
-                if(userPrivateKey != "")
-                {
+        function getUserPrivateKey() {
+            //var userPrivateKey = getUserPrivateKeyFromQueryString();
+            
+            [newUrl, userPrivateKey] = removeURLParameter(window.location.href, "pk");
+            if (userPrivateKey !== null && userPrivateKey !== undefined) { // Set user id
+                if (userPrivateKey == getUserFromCookie()) {
+                    // nothing to do
+                }
+                else if (userPrivateKey != "") {
+                    saveData(); // clear stats
                     saveCookie("user_private_key", userPrivateKey);
-                    // TODO clear stats
-                    return userPrivateKey;
+                }
+                else {
+                    // ?u= --> generate a new user id
+                    var userPrivateKey = makeid(128);
+
+                    saveData(); // clear stats
+                    saveCookie("user_private_key", userPrivateKey);
                 }
                 
-                // ?u= --> generate a new user id
-                var userPrivateKey = makeid(128);
-                saveCookie("user_private_key", userPrivateKey);
+                window.location = newUrl;
                 return userPrivateKey;
             }
-        
+
             userPrivateKey = getUserFromCookie();
-            if(userPrivateKey !== null && userPrivateKey !== undefined && userPrivateKey != "")
-            {
+            if (userPrivateKey !== null && userPrivateKey !== undefined && userPrivateKey != "") {
                 return userPrivateKey;
             }
-        
+
             var userPrivateKey = makeid(128);
             saveCookie("user_private_key", userPrivateKey);
             return userPrivateKey;
         }
-        
-        start = function () {
+
+        function start() {
             let userPrivateKey = getUserPrivateKey();
+
+            if (userPrivateKey.length < 32) {
+                document.getElementById('user_id_insecure_note').style.visibility = 'visible';
+            }
+
             var user_id_to_show = showFullPrivateKey()
                 ? userPrivateKey
-                : userPrivateKey.substring(0,10) + '...';
+                : userPrivateKey.substring(0, 10) + '...';
             document.getElementById('user_id_ui').innerText = user_id_to_show;
-            
-            if(isRandom())
-            {
+
+            if (isRandom()) {
                 progress_percent = Math.round(Math.random() * 100);
-        
+
                 document.getElementById('mode_ui').innerText = "random";
                 var change_mode_link = document.getElementById('mode_ui_link');
                 change_mode_link.setAttribute('href', '?');
                 change_mode_link.innerText = "daily";
             }
-            else 
-            {
+            else {
                 var d = new Date();
                 var seed = d.getFullYear() * 1000 + d.getMonth() * 100 + d.getDay();
-                progress_percent = Math.round( repeatableRandom(seed) * 100);
-        
+                progress_percent = Math.round(repeatableRandom(seed) * 100);
+
                 document.getElementById('mode_ui').innerText = "daily";
                 var change_mode_link = document.getElementById('mode_ui_link');
                 change_mode_link.setAttribute('href', '?r=1');
+
+                if (window.location.href.includes("htmlpreview")) {
+                    change_mode_link.setAttribute('href', 'random.html');
+                }
                 change_mode_link.innerText = "random";
 
+
                 var json_str = getCookie('data');
-                if(json_str != null && json_str != "")
-                {
+                if (json_str != null && json_str != "") {
                     data_from_cookie = JSON.parse(json_str);
-                    if(data_from_cookie.date == new Date().getDate())
-                    {
+                    if (data_from_cookie.date == new Date().getDate()) {
                         data = data_from_cookie;
                     }
                 }
 
 
-                if(data.guesses != null)
-                {
+                if (data.guesses != null) {
                     data.guesses.forEach(i => on_attempt(i, true)); // from_cookie: false
                 }
-                
+
             }
-        
+
             document.getElementById('progress_bar-filled').style.width = progress_percent + '%';
             var guess_input = document.getElementById('guess_input')
             guess_input.focus();
         }
-        
+
         window.onload = function () { start(); };
-        
-        on_finised = function(win) { 
-        
+
+        on_finised = function (win) {
+
             document.getElementById('guess_button').disabled = true;
             document.getElementById('guess_input').disabled = true;
             document.getElementById('progress_bar_answer_div').style.visibility = 'visible';
 
-            document.getElementById('progress_bar_answer').innerText = win 
-                ? '🤜' +  progress_percent + '%🤛'
-                : '🙅' +  progress_percent + '%🙅'
-            
-        }
-        
-        function add_to_table_of_guesses(guessed_percent)
-        {
-            var diff = Math.abs(guessed_percent - progress_percent);
-                var howCloseText = '';
-                if(diff == 0)
-                    howCloseText = '🌟';
-                else if( diff <= 2)
-                    howCloseText = 'So close!';
-                else if (diff < 5)
-                    howCloseText = 'Close';
-                else if (diff < 10)
-                    howCloseText = 'Getting there';
-                else 
-                    howCloseText = 'Not close at all';   
-                 
-                var table = document.getElementById("guesses_table"),
-                tbody = table.getElementsByTagName("tbody")[0];
-                var row = document.createElement("tr");
-                var cell1 = document.createElement("td");
-                var cell2 = document.createElement("td");
-                var cell3 = document.createElement("td");
-                cell1.innerHTML = guessed_percent + '%';
-                cell2.innerHTML = guessed_percent == progress_percent 
-                    ? '✅'
-                    : guessed_percent < progress_percent ? '⬆️' : '⬇️';
-                cell3.innerHTML = howCloseText;
-                cell3.style.textAlign = "left";
-                row.appendChild(cell1);
-                row.appendChild(cell2);
-                row.appendChild(cell3);
-                tbody.appendChild(row);  
+            document.getElementById('progress_bar_answer').innerText = win
+                ? '🤜' + progress_percent + '%🤛'
+                : '🙅' + progress_percent + '%🙅'
+
         }
 
-        function guess_input_onkeypress(event)
-        {
+        function add_to_table_of_guesses(guessed_percent) {
+            var diff = Math.abs(guessed_percent - progress_percent);
+            var howCloseText = '';
+            if (diff == 0)
+                howCloseText = '🌟';
+            else if (diff <= 2)
+                howCloseText = 'So close!';
+            else if (diff < 5)
+                howCloseText = 'Close';
+            else if (diff < 10)
+                howCloseText = 'Getting there';
+            else
+                howCloseText = 'Not close at all';
+
+            var table = document.getElementById("guesses_table"),
+                tbody = table.getElementsByTagName("tbody")[0];
+            var row = document.createElement("tr");
+            var cell1 = document.createElement("td");
+            var cell2 = document.createElement("td");
+            var cell3 = document.createElement("td");
+            cell1.innerHTML = guessed_percent + '%';
+            cell2.innerHTML = guessed_percent == progress_percent
+                ? '✅'
+                : guessed_percent < progress_percent ? '⬆️' : '⬇️';
+            cell3.innerHTML = howCloseText;
+            cell3.style.textAlign = "left";
+            row.appendChild(cell1);
+            row.appendChild(cell2);
+            row.appendChild(cell3);
+            tbody.appendChild(row);
+        }
+
+        function guess_input_onkeypress(event) {
             if (event.key == "Enter") on_click_guess();
         }
-        
+
         function on_click_guess() {
             var guess_input = document.getElementById('guess_input')
             var guessed_percent = guess_input.value;
             guess_input.focus();
-        
+
             var guess_input = document.getElementById('guess_input')
             var guessed_percent = guess_input.value;
 
@@ -281,46 +320,43 @@
             on_attempt(guessed_percent, false); // from_cookie: false
         }
 
-        function saveData () { 
+        function saveData() {
             var json_str = JSON.stringify(data);
-            saveCookie('data', json_str); 
+            saveCookie('data', json_str);
         }
-        
+
         function on_attempt(guessed_percent, from_cookie) {
 
             guess_input.focus();
-        
+
             add_to_table_of_guesses(guessed_percent);
             document.getElementById("attempt").innerText = data.guesses.length + 1;
-        
-            if( guessed_percent == progress_percent)
-            {
+
+            if (guessed_percent == progress_percent) {
                 on_finised(true);
             }
-            else
-            {
-                if(data.guesses.length == 3)
-                {
+            else {
+                if (data.guesses.length == 3) {
                     on_finised(false);
                 }
             }
         }
-        
+
         // From https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
         // by csharptest.net
         function makeid(length) {
-            var result           = '';
-            var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var result = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             var charactersLength = characters.length;
-            for ( var i = 0; i < length; i++ ) {
-              result += characters.charAt(Math.floor(Math.random() * 
-         charactersLength));
-           }
-           return result;
+            for (var i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() *
+                    charactersLength));
+            }
+            return result;
         }
-        
-        
-        </script>
+
+
+    </script>
 </body>
 
 </html>
