@@ -16,200 +16,7 @@
 
 <body style="background-color:black;">
 
-    <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-
-    <!-- <script src="" async defer></script> -->
-    <script type="text/javascript">
-
-
-var seed =  new Date().getTime() / 1000;
-var attempt = 1;
-
-
-// https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie-with-javascript
-// by Srinivas Sabbani
-// with modifications
-function createCookie(name, value, days, extra) {
-    var expires;
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toGMTString();
-    }
-    else {
-        expires = "";
-    }
-    document.cookie = name + "=" + value + expires + "; path=/" + ";SameSite=Strict";
-}
-
-// https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie-with-javascript
-// by Srinivas Sabbani
-function getCookie(c_name) {
-    if (document.cookie.length > 0) {
-        c_start = document.cookie.indexOf(c_name + "=");
-        if (c_start != -1) {
-            c_start = c_start + c_name.length + 1;
-            c_end = document.cookie.indexOf(";", c_start);
-            if (c_end == -1) {
-                c_end = document.cookie.length;
-            }
-            return unescape(document.cookie.substring(c_start, c_end));
-        }
-    }
-    return "";
-} 
-
-// https://stackoverflow.com/a/19303725/581076 by Antti Kissaniemi
-function random() {
-    var x = Math.sin(seed++) * 10000;
-    return x - Math.floor(x);
-}
-
-// https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-// by 42 users, 10% Code Spy 
-function getQueryString() {
-    const params = new Proxy(new URLSearchParams(window.location.search), {
-        get: (searchParams, prop) => searchParams.get(prop),
-        });
-    return params;
-    }
-
-function getUserFromQueryString()
-{
-    return getQueryString().u;
-}
-
-function isRandom()
-{
-    return getQueryString().r == "1";
-}
-
-function getUserFromCookie() {
-    return getCookie("user_id");
-}
-
-function getUserId()
-{
-    var userId = getUserFromQueryString();
     
-    if(userId !== null && userId !== undefined)
-    {
-        if(userId != "")
-        {
-            console.log("From query string");
-            createCookie("user_id", userId);
-            return userId;
-        }
-        
-        var userId = Math.random() + '';
-        createCookie("user_id", userId);
-    }
-
-    userId = getUserFromCookie();
-    if(userId !== null && userId !== undefined && userId != "")
-    {
-        console.log(`From cookie '${userId}'`);
-        return userId;
-    }
-
-    var userId = Math.random() + '';
-    createCookie("user_id", userId);
-}
-
-start = function () {
-    let userId = getUserId();
-    document.getElementById('user_id').innerText = userId;
-    
-    if(isRandom())
-    {
-        // Current epoch
-        seed = new Date().getTime() / 1000;
-    }
-    else 
-    {
-        var d = new Date();
-        seed = d.getFullYear() * 1000 + d.getMonth() * 100 + d.getDay();
-    }
-
-    progress_percent = Math.round(random() * 100);
-
-    document.getElementById('progress_bar-filled').style.width = progress_percent + '%';
-    document.getElementById('progress_bar_answer').innerText = progress_percent + "%";
-
-    var guess_input = document.getElementById('guess_input')
-    guess_input.focus();
-}
-
-window.onload = function () { start(); };
-
-on_finised = function(win) { 
-
-    document.getElementById('guess_button').disabled = true;
-    document.getElementById('progress_bar_answer_div').style.visibility = 'visible';
-}
-
-function add_guessed_row(guessed_percent)
-{
-    var diff = Math.abs(guessed_percent - progress_percent);
-        var howCloseText = '';
-        if(diff == 0)
-            howCloseText = '🌟';
-        else if( diff < 2)
-            howCloseText = 'So close!';
-        else if (diff < 5)
-            howCloseText = 'Close';
-        else if (diff < 10)
-            howCloseText = 'Getting there';
-        else 
-            howCloseText = 'Not close at all';   
-         
-        var table = document.getElementById("guesses_table"),
-        tbody = table.getElementsByTagName("tbody")[0];
-        var row = document.createElement("tr");
-        var cell1 = document.createElement("td");
-        var cell2 = document.createElement("td");
-        var cell3 = document.createElement("td");
-        cell1.innerHTML = guessed_percent + '%';
-        cell2.innerHTML = guessed_percent == progress_percent 
-            ? '✅'
-            : guessed_percent < progress_percent ? '⬆️' : '⬇️';
-        cell3.innerHTML = howCloseText;
-        cell3.style.textAlign = "left";
-        row.appendChild(cell1);
-        row.appendChild(cell2);
-        row.appendChild(cell3);
-        tbody.appendChild(row);  
-}
-
-function on_click_guess() {
-    var guess_input = document.getElementById('guess_input')
-    var guessed_percent = guess_input.value;
-    guess_input.value = '';
-    guess_input.focus();
-
-    add_guessed_row(guessed_percent);
-
-    if( guessed_percent == progress_percent)
-    {
-        on_finised(true);
-    }
-    else
-    {
-        if(attempt == 3)
-        {
-            on_finised(false);
-        }
-        else
-        {
-            attempt += 1;
-            document.getElementById("attempt").innerText = attempt;
-        }
-    }
-}
-
-</script>
 <div class="mono-font">
 <nav>
     <a href="/">/</a>
@@ -222,10 +29,12 @@ function on_click_guess() {
     </div>
 </nav>
 <p/>
-    <div>User id: <label id = "user_id"/></div> 
+    <!-- TODO change to private key and dip-->
+    <div>User id: <label id = "user_id_ui"></label></div>
+    <div>Mode: <label id = "mode_ui"></label> (-><a id="mode_ui_link" href="a">X</a>)</div> 
 <main>
 <div astyle=" border:1px solid red;" class="width-100pc justify-center text-align-center">
-    <p>What's the progress?</p>
+    <p>What's the progress of this progress bar?</p>
     <div id="progress_bar" class="progress-bar"><div id="progress_bar-filled" class="progress-bar-filled"> &NonBreakingSpace;</div> </div>
     <p/>
     <p>
@@ -237,6 +46,224 @@ function on_click_guess() {
 </div>
 </main>
 </div>
+
+<!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <!-- <script src="" async defer></script> -->
+    <script type="text/javascript">
+
+
+        var seed =  new Date().getTime() / 1000;
+        var attempt = 1;
+        
+        
+        // https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie-with-javascript
+        // by Srinivas Sabbani
+        // with modifications
+        function createCookie(name, value, days, extra) {
+            var expires;
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toGMTString();
+            }
+            else {
+                expires = "";
+            }
+            document.cookie = name + "=" + value + expires + "; path=/" + ";SameSite=Strict";
+        }
+        
+        // https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie-with-javascript
+        // by Srinivas Sabbani
+        function getCookie(c_name) {
+            if (document.cookie.length > 0) {
+                c_start = document.cookie.indexOf(c_name + "=");
+                if (c_start != -1) {
+                    c_start = c_start + c_name.length + 1;
+                    c_end = document.cookie.indexOf(";", c_start);
+                    if (c_end == -1) {
+                        c_end = document.cookie.length;
+                    }
+                    return unescape(document.cookie.substring(c_start, c_end));
+                }
+            }
+            return "";
+        } 
+        
+        // https://stackoverflow.com/a/19303725/581076 by Antti Kissaniemi
+        function repeatableRandom(seed) {
+            var x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+        }
+        
+        // https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+        // by 42 users, 10% Code Spy 
+        function getQueryString() {
+            const params = new Proxy(new URLSearchParams(window.location.search), {
+                get: (searchParams, prop) => searchParams.get(prop),
+                });
+            return params;
+            }
+        
+        function getUserPrivateKeyFromQueryString()
+        {
+            return getQueryString().pk;
+        }
+        
+        function isRandom()
+        {
+            return getQueryString().r == "1";
+        }
+        
+        function getUserFromCookie() {
+            return getCookie("user_private_key");
+        }
+        
+        function getUserPrivateKey()
+        {
+            var userPrivateKey = getUserPrivateKeyFromQueryString();
+            if(userPrivateKey !== null && userPrivateKey !== undefined)
+            { // Set user id
+                if(userPrivateKey != "")
+                {
+                    createCookie("user_private_key", userPrivateKey);
+                    return userPrivateKey;
+                }
+                
+                // ?u= --> generate a new user id
+                var userPrivateKey = makeid(128);
+                createCookie("user_private_key", userPrivateKey);
+                return userPrivateKey;
+            }
+        
+            userPrivateKey = getUserFromCookie();
+            if(userPrivateKey !== null && userPrivateKey !== undefined && userPrivateKey != "")
+            {
+                return userPrivateKey;
+            }
+        
+            var userPrivateKey = makeid(128);
+            createCookie("user_private_key", userPrivateKey);
+            return userPrivateKey;
+        }
+        
+        start = function () {
+            let userPrivateKey = getUserPrivateKey();
+            console.log(`The user is: '${userPrivateKey}'`);
+            document.getElementById('user_id_ui').innerText = userPrivateKey.substring(0,10) + '...';
+            
+            if(isRandom())
+            {
+                progress_percent = Math.round(Math.random() * 100);
+        
+                document.getElementById('mode_ui').innerText = "random";
+                var change_mode_link = document.getElementById('mode_ui_link');
+                change_mode_link.setAttribute('href', '?');
+                change_mode_link.innerText = "daily";
+            }
+            else 
+            {
+                var d = new Date();
+                seed = d.getFullYear() * 1000 + d.getMonth() * 100 + d.getDay();
+                progress_percent = Math.round( repeatableRandom(seed) * 100);
+        
+                document.getElementById('mode_ui').innerText = "daily";
+                var change_mode_link = document.getElementById('mode_ui_link');
+                change_mode_link.setAttribute('href', '?r=1');
+                change_mode_link.innerText = "random";
+            }
+        
+            document.getElementById('progress_bar-filled').style.width = progress_percent + '%';
+            document.getElementById('progress_bar_answer').innerText = progress_percent + "%";
+        
+            var guess_input = document.getElementById('guess_input')
+            guess_input.focus();
+        }
+        
+        window.onload = function () { start(); };
+        
+        on_finised = function(win) { 
+        
+            document.getElementById('guess_button').disabled = true;
+            document.getElementById('progress_bar_answer_div').style.visibility = 'visible';
+        }
+        
+        function add_guessed_row(guessed_percent)
+        {
+            var diff = Math.abs(guessed_percent - progress_percent);
+                var howCloseText = '';
+                if(diff == 0)
+                    howCloseText = '🌟';
+                else if( diff < 2)
+                    howCloseText = 'So close!';
+                else if (diff < 5)
+                    howCloseText = 'Close';
+                else if (diff < 10)
+                    howCloseText = 'Getting there';
+                else 
+                    howCloseText = 'Not close at all';   
+                 
+                var table = document.getElementById("guesses_table"),
+                tbody = table.getElementsByTagName("tbody")[0];
+                var row = document.createElement("tr");
+                var cell1 = document.createElement("td");
+                var cell2 = document.createElement("td");
+                var cell3 = document.createElement("td");
+                cell1.innerHTML = guessed_percent + '%';
+                cell2.innerHTML = guessed_percent == progress_percent 
+                    ? '✅'
+                    : guessed_percent < progress_percent ? '⬆️' : '⬇️';
+                cell3.innerHTML = howCloseText;
+                cell3.style.textAlign = "left";
+                row.appendChild(cell1);
+                row.appendChild(cell2);
+                row.appendChild(cell3);
+                tbody.appendChild(row);  
+        }
+        
+        function on_click_guess() {
+            var guess_input = document.getElementById('guess_input')
+            var guessed_percent = guess_input.value;
+            guess_input.value = '';
+            guess_input.focus();
+        
+            add_guessed_row(guessed_percent);
+        
+            if( guessed_percent == progress_percent)
+            {
+                on_finised(true);
+            }
+            else
+            {
+                if(attempt == 3)
+                {
+                    on_finised(false);
+                }
+                else
+                {
+                    attempt += 1;
+                    document.getElementById("attempt").innerText = attempt;
+                }
+            }
+        }
+        
+        // From https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+        // by csharptest.net
+        function makeid(length) {
+            var result           = '';
+            var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for ( var i = 0; i < length; i++ ) {
+              result += characters.charAt(Math.floor(Math.random() * 
+         charactersLength));
+           }
+           return result;
+        }
+        
+        
+        </script>
 </body>
 
 </html>
