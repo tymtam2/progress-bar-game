@@ -11,6 +11,7 @@
    1. Get a domain
    2. Get a server
 5. ✅ Add buttons, make functional
-6. Add scores from cookies 
-7. Daily/random mode
-8. Address username clashes: if two people put ?u=a then they could see each other scores = BAD
+6. ✅ Add scores from cookies 
+7. ✅ Daily/random mode
+8. ✅ Address username clashes: if two people put ?u=a then they could see each other scores = BAD 
+   Solution use long random username (which is like a private key or password) and display only part of it (and in help page show how to display the whole username)

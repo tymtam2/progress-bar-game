@@ -28,19 +28,21 @@
         ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================
     </div>
 </nav>
-<p/>
-    <!-- TODO change to private key and dip-->
     <div>User id: <label id = "user_id_ui"></label></div>
-    <div>Mode: <label id = "mode_ui"></label> (-><a id="mode_ui_link" href="a">X</a>)</div> 
+    <div>Mode: <label id = "mode_ui"></label> (><a id="mode_ui_link" href="a">X</a>)</div> 
 <main>
-<div astyle=" border:1px solid red;" class="width-100pc justify-center text-align-center">
-    <p>What's the progress of this progress bar?</p>
+<div class="width-100pc justify-center text-align-center">
+    <p>Har far are we?</p>
     <div id="progress_bar" class="progress-bar"><div id="progress_bar-filled" class="progress-bar-filled"> &NonBreakingSpace;</div> </div>
-    <p/>
+    <p></p>
     <p>
-    <div style="visibility: hidden" id="progress_bar_answer_div">> <label id="progress_bar_answer"></label> <</div>
+    <div style="visibility: hidden" id="progress_bar_answer_div" class="progress_bar_answer"><label id="progress_bar_answer">&nbsp;</label></div>
     </p>
-    <input type="number" id="guess_input"/>%  <button id="guess_button" onclick="on_click_guess()">Try</button>
+    <div class="guess_div">
+        <input type="number" id="guess_input" class="guess-input" step="1" min="0" maxlength="2" max="100"/>
+        <label class="guess-input-percent">%&nbsp;</label>
+        <button id="guess_button" onclick="on_click_guess()">Try</button>
+    </div>
     <div>Attempt <label id="attempt">1</label> of 3</div>
     <table id="guesses_table"><tbody></tbody></table>
 </div>
@@ -55,14 +57,16 @@
     <script type="text/javascript">
 
 
-        var seed =  new Date().getTime() / 1000;
-        var attempt = 1;
+        var data = {
+            date: new Date().getDate(),
+            guesses: []
+        }
         
         
         // https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie-with-javascript
         // by Srinivas Sabbani
         // with modifications
-        function createCookie(name, value, days, extra) {
+        function saveCookie(name, value, days, extra) {
             var expires;
             if (days) {
                 var date = new Date();
@@ -116,6 +120,12 @@
         {
             return getQueryString().r == "1";
         }
+
+        function showFullPrivateKey()
+        {
+            var showUserPK = getQueryString().show_pk;
+            return showUserPK !== null && showUserPK !== undefined;
+        }
         
         function getUserFromCookie() {
             return getCookie("user_private_key");
@@ -126,15 +136,22 @@
             var userPrivateKey = getUserPrivateKeyFromQueryString();
             if(userPrivateKey !== null && userPrivateKey !== undefined)
             { // Set user id
+                if(userPrivateKey == getUserFromCookie())
+                {
+                    // nothing to do
+                    return userPrivateKey;
+                }
+
                 if(userPrivateKey != "")
                 {
-                    createCookie("user_private_key", userPrivateKey);
+                    saveCookie("user_private_key", userPrivateKey);
+                    // TODO clear stats
                     return userPrivateKey;
                 }
                 
                 // ?u= --> generate a new user id
                 var userPrivateKey = makeid(128);
-                createCookie("user_private_key", userPrivateKey);
+                saveCookie("user_private_key", userPrivateKey);
                 return userPrivateKey;
             }
         
@@ -145,14 +162,16 @@
             }
         
             var userPrivateKey = makeid(128);
-            createCookie("user_private_key", userPrivateKey);
+            saveCookie("user_private_key", userPrivateKey);
             return userPrivateKey;
         }
         
         start = function () {
             let userPrivateKey = getUserPrivateKey();
-            console.log(`The user is: '${userPrivateKey}'`);
-            document.getElementById('user_id_ui').innerText = userPrivateKey.substring(0,10) + '...';
+            var user_id_to_show = showFullPrivateKey()
+                ? userPrivateKey
+                : userPrivateKey.substring(0,10) + '...';
+            document.getElementById('user_id_ui').innerText = user_id_to_show;
             
             if(isRandom())
             {
@@ -166,18 +185,33 @@
             else 
             {
                 var d = new Date();
-                seed = d.getFullYear() * 1000 + d.getMonth() * 100 + d.getDay();
+                var seed = d.getFullYear() * 1000 + d.getMonth() * 100 + d.getDay();
                 progress_percent = Math.round( repeatableRandom(seed) * 100);
         
                 document.getElementById('mode_ui').innerText = "daily";
                 var change_mode_link = document.getElementById('mode_ui_link');
                 change_mode_link.setAttribute('href', '?r=1');
                 change_mode_link.innerText = "random";
+
+                var json_str = getCookie('data');
+                if(json_str != null && json_str != "")
+                {
+                    data_from_cookie = JSON.parse(json_str);
+                    if(data_from_cookie.date == new Date().getDate())
+                    {
+                        data = data_from_cookie;
+                    }
+                }
+
+
+                if(data.guesses != null)
+                {
+                    data.guesses.forEach(i => on_attempt(i, true)); // from_cookie: false
+                }
+                
             }
         
             document.getElementById('progress_bar-filled').style.width = progress_percent + '%';
-            document.getElementById('progress_bar_answer').innerText = progress_percent + "%";
-        
             var guess_input = document.getElementById('guess_input')
             guess_input.focus();
         }
@@ -187,16 +221,22 @@
         on_finised = function(win) { 
         
             document.getElementById('guess_button').disabled = true;
+            document.getElementById('guess_input').disabled = true;
             document.getElementById('progress_bar_answer_div').style.visibility = 'visible';
+
+            document.getElementById('progress_bar_answer').innerText = win 
+                ? '🤜' +  progress_percent + '%🤛'
+                : '🙅' +  progress_percent + '%🙅'
+            
         }
         
-        function add_guessed_row(guessed_percent)
+        function add_to_table_of_guesses(guessed_percent)
         {
             var diff = Math.abs(guessed_percent - progress_percent);
                 var howCloseText = '';
                 if(diff == 0)
                     howCloseText = '🌟';
-                else if( diff < 2)
+                else if( diff <= 2)
                     howCloseText = 'So close!';
                 else if (diff < 5)
                     howCloseText = 'Close';
@@ -226,10 +266,27 @@
         function on_click_guess() {
             var guess_input = document.getElementById('guess_input')
             var guessed_percent = guess_input.value;
-            guess_input.value = '';
             guess_input.focus();
         
-            add_guessed_row(guessed_percent);
+            var guess_input = document.getElementById('guess_input')
+            var guessed_percent = guess_input.value;
+
+            data.guesses.push(guessed_percent);
+            saveData();
+            on_attempt(guessed_percent, false); // from_cookie: false
+        }
+
+        function saveData () { 
+            var json_str = JSON.stringify(data);
+            saveCookie('data', json_str); 
+        }
+        
+        function on_attempt(guessed_percent, from_cookie) {
+
+            guess_input.focus();
+        
+            add_to_table_of_guesses(guessed_percent);
+            document.getElementById("attempt").innerText = data.guesses.length;
         
             if( guessed_percent == progress_percent)
             {
@@ -237,14 +294,9 @@
             }
             else
             {
-                if(attempt == 3)
+                if(data.guesses.length == 3)
                 {
                     on_finised(false);
-                }
-                else
-                {
-                    attempt += 1;
-                    document.getElementById("attempt").innerText = attempt;
                 }
             }
         }

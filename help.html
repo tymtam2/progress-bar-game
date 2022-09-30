@@ -35,8 +35,14 @@
         <p/>
         <main>
            <p>1. <B>User id</B><BR>
-              To take your user id to another device (to get the stats) add `?pk=your_user_id` to the url. 
-              This will save the user id into a cookie so you need to append it only one time. </p>
+              To take your user id to another device (to get the stats):
+                 <ol>
+                 <li> On the original device, add `?show_pk` to the url.</li>
+                 <li> Copy the private key (user id) </li>
+                 <li> On the new device, add `?pk=private_key_here` to url. This will save the user id into a cookie so you need to do this only once. 
+                      Next time you can just go to the normal url without the `?pk=` part.</li>
+                </ol>
+               </p>
             
         </main>
     </div>
