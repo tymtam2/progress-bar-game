@@ -30,12 +30,14 @@
         </nav>
         <div id="main_warning" class="warning" style="visibility: hidden"></div>
         <div>
-            User id:
+            User Key:
             <label id="user_id_ui"></label>
             <label id="user_id_insecure_note" style="visibility: hidden" class="user-id-insecure-note">(INSECURE, see:
                 <a href="help.html">>help</a>)</label>
         </div>
         <div>Mode: <label id="mode_ui"></label> (><a id="mode_ui_link" href="a">X</a>)</div>
+        <div id="stats_div">Stats: <label id="stats_label"></label></div>
+        <div id="user_data_div" style="visibility: hidden">Data: <label id="user_data"></label></div>
         <main>
             <div class="width-100pc justify-center text-align-center">
                 <p>How far are we?</p>
@@ -67,12 +69,31 @@
 
     <!-- <script src="" async defer></script> -->
     <script type="text/javascript">
-
-
-        var data = {
-            date: new Date().getDate(),
-            guesses: []
+        function getEmptyData() {
+            return {
+                date: new Date().getDate(),
+                guesses: [],
+                stats: {
+                    daily: {
+                        played: 0,
+                        total_wins: 0,
+                        consecutive_wins: 0,
+                        last_win_date: null,
+                        last_was_win: false,
+                        max_consecutive_wins: 0
+                    },
+                    practice: {
+                        played: 0,
+                        total_wins: 0,
+                        consecutive_wins: 0,
+                        last_was_win: false,
+                        max_consecutive_wins: 0
+                    }
+                }
+            }
         }
+
+        data = getEmptyData();
 
 
         // https://stackoverflow.com/questions/4825683/how-do-i-create-and-read-a-value-from-cookie-with-javascript
@@ -136,7 +157,7 @@
         // 7 revs, 7 users 52% bobince
         // with modifications (to extract the value of the param)
         function removeURLParameter(url, parameter) {
-            
+
             var parameterValue = null;
             //prefer to use l.search if you have a location/link object
             var urlparts = url.split('?');
@@ -144,14 +165,13 @@
             urlparts.slice(1).forEach(part => {
                 var prefix = encodeURIComponent(parameter) + '=';
                 var pars = part.split(/[&;]/g);
-        
-                for (var i = 0; i < pars.length;i++) {
+
+                for (var i = 0; i < pars.length; i++) {
                     //idiom for string.startsWith
                     if (pars[i].lastIndexOf(prefix, 0) !== -1) {
                         parameterValue = pars[i].substring(prefix.length);
                     }
-                    else
-                    {
+                    else {
                         parsAll.push(pars[i])
                     }
                 }
@@ -159,9 +179,15 @@
             return [urlparts[0] + (parsAll.length > 0 ? '?' + parsAll.join('&') : ''), parameterValue];
         }
 
-        function showFullPrivateKey() {
+        function isShowFullPK() {
             var showUserPK = getQueryString().show_pk;
             return showUserPK !== null && showUserPK !== undefined;
+        }
+
+
+        function isShowData() {
+            var show = getQueryString().show_data;
+            return show !== null && show !== undefined;
         }
 
         function getUserFromCookie() {
@@ -170,13 +196,14 @@
 
         function getUserPrivateKey() {
             //var userPrivateKey = getUserPrivateKeyFromQueryString();
-            
+
             [newUrl, userPrivateKey] = removeURLParameter(window.location.href, "pk");
             if (userPrivateKey !== null && userPrivateKey !== undefined) { // Set user id
                 if (userPrivateKey == getUserFromCookie()) {
                     // nothing to do
                 }
                 else if (userPrivateKey != "") {
+                    data = getEmptyData();
                     saveData(); // clear stats
                     saveCookie("user_private_key", userPrivateKey);
                 }
@@ -184,10 +211,11 @@
                     // ?u= --> generate a new user id
                     var userPrivateKey = makeid(128);
 
+                    data = getEmptyData();
                     saveData(); // clear stats
                     saveCookie("user_private_key", userPrivateKey);
                 }
-                
+
                 window.location = newUrl;
                 return userPrivateKey;
             }
@@ -202,6 +230,16 @@
             return userPrivateKey;
         }
 
+        function showStats() {
+            var stats = isRandom() ? data.stats.practice : data.stats.daily;
+            var stats_str = (isRandom() ? "(practice) " : "") 
+                + `played: ${stats.played}`
+                + ` wins: ${stats.total_wins}`
+                + ` streak: ${stats.consecutive_wins}`
+                + ` max streak: ${stats.max_consecutive_wins}` 
+            document.getElementById("stats_label").innerText = stats_str;
+        }
+
         function start() {
             let userPrivateKey = getUserPrivateKey();
 
@@ -209,15 +247,57 @@
                 document.getElementById('user_id_insecure_note').style.visibility = 'visible';
             }
 
-            var user_id_to_show = showFullPrivateKey()
+            var user_id_to_show = isShowFullPK()
                 ? userPrivateKey
                 : userPrivateKey.substring(0, 10) + '...';
             document.getElementById('user_id_ui').innerText = user_id_to_show;
 
+
+            [newUrl, user_data_qs] = removeURLParameter(window.location.href, "user_data");
+            if (user_data_qs !== null && user_data_qs !== undefined) {
+                data = JSON.parse(atob(user_data_qs));
+                saveData();
+
+
+                window.location = newUrl;
+            }
+
+            // Load data
+            var json_str = getCookie('data');
+            if (json_str != null && json_str != "") {
+                data_from_cookie = JSON.parse(json_str);
+                if(data_from_cookie.stats.daily.max_consecutive_wins == undefined)
+                {
+                    data_from_cookie.stats.daily.max_consecutive_wins = data_from_cookie.stats.daily.consecutive_wins;
+                }
+                if(data_from_cookie.stats.practice.max_consecutive_wins == undefined)
+                {
+                    data_from_cookie.stats.practice.max_consecutive_wins = data_from_cookie.stats.practice.consecutive_wins;
+                }
+                data = data_from_cookie;
+            }
+
+            showStats();
+
+            if (isShowData()) {
+                var user_data = {
+                    userPrivateKey: userPrivateKey,
+                    data: data
+                };
+                var user_data_json = JSON.stringify(data);
+                var user_data_str = btoa(user_data_json);
+                document.getElementById('user_data').innerText = user_data_str;
+                document.getElementById('user_data_div').style.visibility = 'visible';
+            }
+
+
+            const randomModeName = "practice";
+
             if (isRandom()) {
+                data.guesses = [];
                 progress_percent = Math.round(Math.random() * 100);
 
-                document.getElementById('mode_ui').innerText = "random";
+                document.getElementById('mode_ui').innerText = randomModeName;
                 var change_mode_link = document.getElementById('mode_ui_link');
                 change_mode_link.setAttribute('href', '?');
 
@@ -228,6 +308,10 @@
                 change_mode_link.innerText = "daily";
             }
             else {
+                if(data.stats.daily.last_win_date != new Date().getDate())
+                {
+                    data.guesses = [];
+                }
                 var d = new Date();
                 var seed = d.getFullYear() * 1000 + d.getMonth() * 100 + d.getDay();
                 progress_percent = Math.round(repeatableRandom(seed) * 100);
@@ -239,22 +323,11 @@
                 if (window.location.href.includes("htmlpreview")) {
                     change_mode_link.setAttribute('href', 'random.html');
                 }
-                change_mode_link.innerText = "random";
+                change_mode_link.innerText = randomModeName;
+            }
 
-
-                var json_str = getCookie('data');
-                if (json_str != null && json_str != "") {
-                    data_from_cookie = JSON.parse(json_str);
-                    if (data_from_cookie.date == new Date().getDate()) {
-                        data = data_from_cookie;
-                    }
-                }
-
-
-                if (data.guesses != null) {
-                    data.guesses.forEach(i => on_attempt(i, true)); // from_cookie: false
-                }
-
+            if (data.guesses != null) {
+                data.guesses.forEach(i => on_attempt(i, true)); // from_cookie: true
             }
 
             document.getElementById('progress_bar-filled').style.width = progress_percent + '%';
@@ -264,7 +337,7 @@
 
         window.onload = function () { start(); };
 
-        on_finised = function (win) {
+        on_finished = function (win, from_cookie) {
 
             document.getElementById('guess_button').disabled = true;
             document.getElementById('guess_input').disabled = true;
@@ -274,6 +347,61 @@
                 ? '🤜' + progress_percent + '%🤛'
                 : '🙅' + progress_percent + '%🙅'
 
+            if (!from_cookie) {
+                if (!isRandom()) {
+                    var daily = data.stats.daily;
+                    daily.played += 1;
+
+                    if (win) {
+                        daily.total_wins += 1;
+
+                        if (daily.last_win_date == new Date().getDate() - 1) {
+                            daily.consecutive_wins += 1;
+                        }
+                        else {
+                            daily.consecutive_wins = 1;
+                        }
+
+                        if(daily.max_consecutive_wins < daily.consecutive_wins)
+                        {
+                            daily.max_consecutive_wins = daily.consecutive_wins;
+                        }
+                        
+                        daily.last_win_date = new Date().getDate();
+                    }
+                    else {
+                        daily.consecutive_wins = 0;
+                        daily.last_was_win = false;
+                    }
+                }
+                else { // random
+                    var practice = data.stats.practice;
+                    practice.played += 1;
+
+                    if (win) {
+                        practice.total_wins += 1;
+
+                        if (practice.last_was_win) {
+                            practice.consecutive_wins += 1;
+                        }
+                        else {
+                            practice.consecutive_wins = 1;
+                        }
+
+                        if(practice.max_consecutive_wins < practice.consecutive_wins)
+                        {
+                            practice.max_consecutive_wins = practice.consecutive_wins;
+                        }
+                        practice.last_was_win = true;
+                    }
+                    else {
+                        practice.consecutive_wins = 0;
+                        practice.last_was_win = false;
+                    }
+                }
+                saveData();
+                showStats();
+            }
         }
 
         function add_to_table_of_guesses(guessed_percent) {
@@ -338,11 +466,11 @@
             document.getElementById("attempt").innerText = data.guesses.length + 1;
 
             if (guessed_percent == progress_percent) {
-                on_finised(true);
+                on_finished(true, from_cookie);
             }
             else {
-                if (data.guesses.length == 3) {
-                    on_finised(false);
+                if (data.guesses.length >= 3) {
+                    on_finished(false, from_cookie);
                 }
             }
         }
