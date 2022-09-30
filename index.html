@@ -39,7 +39,7 @@
     <div style="visibility: hidden" id="progress_bar_answer_div" class="progress_bar_answer"><label id="progress_bar_answer">&nbsp;</label></div>
     </p>
     <div class="guess_div">
-        <input type="number" id="guess_input" class="guess-input" step="1" min="0" maxlength="2" max="100"/>
+        <input type="number" id="guess_input" class="guess-input" step="1" min="0" maxlength="2" max="100" onkeypress="guess_input_onkeypress(event)"/>
         <label class="guess-input-percent">%&nbsp;</label>
         <button id="guess_button" onclick="on_click_guess()">Try</button>
     </div>
@@ -262,6 +262,11 @@
                 row.appendChild(cell3);
                 tbody.appendChild(row);  
         }
+
+        function guess_input_onkeypress(event)
+        {
+            if (event.key == "Enter") on_click_guess();
+        }
         
         function on_click_guess() {
             var guess_input = document.getElementById('guess_input')
@@ -286,7 +291,7 @@
             guess_input.focus();
         
             add_to_table_of_guesses(guessed_percent);
-            document.getElementById("attempt").innerText = data.guesses.length;
+            document.getElementById("attempt").innerText = data.guesses.length + 1;
         
             if( guessed_percent == progress_percent)
             {
