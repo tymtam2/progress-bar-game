@@ -39,7 +39,7 @@
 
         <main>
             <div class="width-100pc justify-center text-align-center">
-                <p>How far are we?</p>
+                <p>Guess the progress</p>
                 <div id="progress_bar_container" class="display-flex justify-center">
                     <div id="progress_bar" class="progress-bar">
                         <div astyle="border: 1px solid yellow" id="progress_bar-filled" class="progress-bar-filled">
@@ -54,8 +54,8 @@
                 <div class="guess_div">
                     <input type="number" id="guess_input" pattern="[0-9]*" class="guess-input" step="1" min="0" maxlength="2" max="100"
                         onkeypress="guess_input_onkeypress(event)" />
-                    <label class="guess-input-percent">%%%&nbsp;</label>
-                    <button id="guess_button" onclick="on_click_guess()">Try</button>
+                    <label class="guess-input-percent">%&nbsp;</label>
+                    <button id="guess_button" onclick="on_click_guess()" class="guess_button">Try</button>
                 </div>
                 <div>Attempt <label id="attempt">1</label> of 3</div>
                 <table id="guesses_table">
@@ -240,10 +240,10 @@
         function showStats() {
             var stats = isRandom() ? data.stats.practice : data.stats.daily;
             var stats_str = (isRandom() ? "(practice) " : "")
-                + `played: ${stats.played}`
-                + ` wins: ${stats.total_wins}`
-                + ` streak: ${stats.consecutive_wins}`
-                + ` max streak: ${stats.max_consecutive_wins}`
+                + `played/${stats.played}`
+                + ` wins/${stats.total_wins}`
+                + ` streak/${stats.consecutive_wins}`
+                + ` max streak/${stats.max_consecutive_wins}`
             document.getElementById("stats_label").innerText = stats_str;
         }
 

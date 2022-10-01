@@ -45,12 +45,11 @@ a:visited {
 
 .guess-input-percent {
     font-size:large;
-    color: pink;
 }
 
 .progress_bar_answer
 {
-    afont-size: xx-large;
+    font-size: xx-large;
 }
 
 
