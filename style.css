@@ -112,6 +112,10 @@ a:visited {
     text-align: center;
 }
 
+.text-align-left {
+    text-align: left;
+}
+
 .mono-font {
     font-family: monospace;
 }
