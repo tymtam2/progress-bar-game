@@ -3,9 +3,8 @@ body {
     background-color:rgb(26, 43, 228);
 }
 
-/* Hide until page is fully loaded to prevent white flash*/
-body:not(.loaded) {
-    visibility: hidden ;
+.loaded {
+  visibility: visible;
 }
 
 
