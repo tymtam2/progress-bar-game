@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 
-<body onload="document.body.classList.add('loaded')">
+<body>
 
 
     <div class="mono-font">
@@ -338,6 +338,8 @@
             document.getElementById('progress_bar-notfilled').style.width = (100 - progress_percent) + '%';
             var guess_input = document.getElementById('guess_input')
             guess_input.focus();
+
+            document.body.classList.add('loaded');
         }
 
         window.onload = function () { start(); };

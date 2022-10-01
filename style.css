@@ -4,9 +4,9 @@ body {
 }
 
 /* Hide until page is fully loaded to prevent white flash*/
-body:not(.loaded) #slider img {
-    display:none;
-  }
+body:not(.loaded) {
+    visibility: hidden ;
+}
 
 
 
