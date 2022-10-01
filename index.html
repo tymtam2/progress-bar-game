@@ -41,12 +41,13 @@
         <main>
             <div class="width-100pc justify-center text-align-center">
                 <p>How far are we?</p>
-                <div id="progress_bar" class="progress-bar">
-                    <div id="progress_bar-filled" class="progress-bar-filled"> &NonBreakingSpace;</div>
+                <div astyle="border: 1px solid red" id="progress_bar" class="progress-bar">
+                    <div astyle="border: 1px solid yellow" id="progress_bar-filled" class="progress-bar-filled"> &NonBreakingSpace;</div>
+                    <div astyle="border: 1px solid green" id="progress_bar-notfilled" class="progress-bar-notfilled"> &NonBreakingSpace;</div>
                 </div>
                 <p></p>
                 <p>
-                <div style="visibility: hidden" id="progress_bar_answer_div" class="progress_bar_answer"><label
+                <div astyle="visibility: hidden" id="progress_bar_answer_div" class="progress_bar_answer"><label
                         id="progress_bar_answer">&nbsp;</label></div>
                 </p>
                 <div class="guess_div">
@@ -331,6 +332,7 @@
             }
 
             document.getElementById('progress_bar-filled').style.width = progress_percent + '%';
+            document.getElementById('progress_bar-notfilled').style.width = (100-progress_percent) + '%';
             var guess_input = document.getElementById('guess_input')
             guess_input.focus();
         }

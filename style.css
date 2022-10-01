@@ -64,12 +64,27 @@ a:visited {
 }
 
 .progress-bar {
-    border: 1px solid;
+    display: -webkit-flexbox;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+}
+.progress-bar-notfilled {
+    background-color: white;
+    opacity: 0.4;
+    float:left;
+    border-radius: 0px 4px 4px 0px; 
+    -moz-border-radius: 0px 4px 4px 0px;
 }
 
 .progress-bar-filled {
+    float: left;
     background-color: azure;
     width: 50%;
+    opacity: 0.95;
+    border-radius: 4px 0px 0px 4px; 
+    -moz-border-radius: 4px 0px 0px 4px;
 }
 
 .justify-center {
