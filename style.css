@@ -1,6 +1,5 @@
 body {
     color: white;
-    /* text-shadow: 1px 1px 2px black;  */
     background-color:rgb(26, 43, 228);
 }
 
@@ -13,11 +12,14 @@ body:not(.loaded) #slider img {
 
 a:link {
     color: white;
+    text-shadow: 1px 1px 2px black;  
+    
     text-decoration: none;
 }
 
 a:visited {
     color: white;
+    text-shadow: 1px 1px 2px black;  
     text-decoration: none;
 }
 

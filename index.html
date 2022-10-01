@@ -65,7 +65,7 @@
         </main>
     </div>
     <footer>
-        <div>Mode: <label id="mode_ui"></label> (><a id="mode_ui_link" href="a">X</a>)</div>
+        <div>Mode: <label id="mode_ui"></label> (<a id="mode_ui_link" href="a">X</a>)</div>
         <div id="stats_div">Stats: <label id="stats_label"></label></div>
         <div id="user_data_div" style="visibility: hidden">Data: <label id="user_data"></label></div>        
     </footer>
@@ -310,7 +310,7 @@
                     change_mode_link.setAttribute('href', 'index.html');
                 }
 
-                change_mode_link.innerText = "daily";
+                change_mode_link.innerText = "/daily";
             }
             else {
                 if (data.stats.daily.last_win_date != new Date().getDate()) {
@@ -327,7 +327,7 @@
                 if (window.location.href.includes("htmlpreview")) {
                     change_mode_link.setAttribute('href', 'random.html');
                 }
-                change_mode_link.innerText = randomModeName;
+                change_mode_link.innerText = '/'+randomModeName;
             }
 
             if (data.guesses != null) {
