@@ -1,11 +1,17 @@
 body {
     color: white;
+    background-color:rgb(26, 43, 228);
 }
 
 
 
 a:link {
-    color: gray;
+    color: white;
+    text-decoration: none;
+}
+
+a:visited {
+    color: white;
     text-decoration: none;
 }
 
@@ -47,11 +53,7 @@ a:link {
     font-size: 6vh;
 }
 
-/* visited link */
-a:visited {
-    color: gray;
-    text-decoration: none;
-}
+
 
 .width-100pc {
     width: 100%
@@ -68,6 +70,7 @@ a:visited {
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
+    width: 80%;
 
 }
 .progress-bar-notfilled {
@@ -89,6 +92,13 @@ a:visited {
 
 .justify-center {
     justify-content: center
+}
+
+.display-flex {
+    display: -webkit-flexbox;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
 }
 
 .text-align-center {

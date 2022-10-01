@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 
-<body style="background-color:black;">
+<body class="body">
 
 
     <div class="mono-font">
@@ -29,7 +29,7 @@
             </div>
         </nav>
         <div id="main_warning" class="warning" style="visibility: hidden"></div>
-        <div>
+        <div style="display:none">
             User Key:
             <label id="user_id_ui"></label>
             <label id="user_id_insecure_note" style="visibility: hidden" class="user-id-insecure-note">(INSECURE, see:
@@ -41,15 +41,17 @@
         <main>
             <div class="width-100pc justify-center text-align-center">
                 <p>How far are we?</p>
-                <div astyle="border: 1px solid red" id="progress_bar" class="progress-bar">
-                    <div astyle="border: 1px solid yellow" id="progress_bar-filled" class="progress-bar-filled"> &NonBreakingSpace;</div>
-                    <div astyle="border: 1px solid green" id="progress_bar-notfilled" class="progress-bar-notfilled"> &NonBreakingSpace;</div>
+                <div id="progress_bar_container" class="display-flex justify-center">
+                    <div id="progress_bar" class="progress-bar">
+                        <div astyle="border: 1px solid yellow" id="progress_bar-filled" class="progress-bar-filled">
+                            &NonBreakingSpace;</div>
+                        <div astyle="border: 1px solid green" id="progress_bar-notfilled"
+                            class="progress-bar-notfilled"> &NonBreakingSpace;</div>
+                    </div>
                 </div>
-                <p></p>
-                <p>
-                <div style="visibility:hidden" id="progress_bar_answer_div" class="progress_bar_answer"><label
-                        id="progress_bar_answer">&nbsp;</label></div>
-                </p>
+                <div id="progress_bar_answer_div" class="progress_bar_answer">
+                    <label id="progress_bar_answer">&nbsp;</label>
+                </div>
                 <div class="guess_div">
                     <input type="number" id="guess_input" class="guess-input" step="1" min="0" maxlength="2" max="100"
                         onkeypress="guess_input_onkeypress(event)" />
@@ -233,11 +235,11 @@
 
         function showStats() {
             var stats = isRandom() ? data.stats.practice : data.stats.daily;
-            var stats_str = (isRandom() ? "(practice) " : "") 
+            var stats_str = (isRandom() ? "(practice) " : "")
                 + `played: ${stats.played}`
                 + ` wins: ${stats.total_wins}`
                 + ` streak: ${stats.consecutive_wins}`
-                + ` max streak: ${stats.max_consecutive_wins}` 
+                + ` max streak: ${stats.max_consecutive_wins}`
             document.getElementById("stats_label").innerText = stats_str;
         }
 
@@ -267,12 +269,10 @@
             var json_str = getCookie('data');
             if (json_str != null && json_str != "") {
                 data_from_cookie = JSON.parse(json_str);
-                if(data_from_cookie.stats.daily.max_consecutive_wins == undefined)
-                {
+                if (data_from_cookie.stats.daily.max_consecutive_wins == undefined) {
                     data_from_cookie.stats.daily.max_consecutive_wins = data_from_cookie.stats.daily.consecutive_wins;
                 }
-                if(data_from_cookie.stats.practice.max_consecutive_wins == undefined)
-                {
+                if (data_from_cookie.stats.practice.max_consecutive_wins == undefined) {
                     data_from_cookie.stats.practice.max_consecutive_wins = data_from_cookie.stats.practice.consecutive_wins;
                 }
                 data = data_from_cookie;
@@ -309,8 +309,7 @@
                 change_mode_link.innerText = "daily";
             }
             else {
-                if(data.stats.daily.last_win_date != new Date().getDate())
-                {
+                if (data.stats.daily.last_win_date != new Date().getDate()) {
                     data.guesses = [];
                 }
                 var d = new Date();
@@ -332,7 +331,7 @@
             }
 
             document.getElementById('progress_bar-filled').style.width = progress_percent + '%';
-            document.getElementById('progress_bar-notfilled').style.width = (100-progress_percent) + '%';
+            document.getElementById('progress_bar-notfilled').style.width = (100 - progress_percent) + '%';
             var guess_input = document.getElementById('guess_input')
             guess_input.focus();
         }
@@ -364,11 +363,10 @@
                             daily.consecutive_wins = 1;
                         }
 
-                        if(daily.max_consecutive_wins < daily.consecutive_wins)
-                        {
+                        if (daily.max_consecutive_wins < daily.consecutive_wins) {
                             daily.max_consecutive_wins = daily.consecutive_wins;
                         }
-                        
+
                         daily.last_win_date = new Date().getDate();
                     }
                     else {
@@ -390,8 +388,7 @@
                             practice.consecutive_wins = 1;
                         }
 
-                        if(practice.max_consecutive_wins < practice.consecutive_wins)
-                        {
+                        if (practice.max_consecutive_wins < practice.consecutive_wins) {
                             practice.max_consecutive_wins = practice.consecutive_wins;
                         }
                         practice.last_was_win = true;
