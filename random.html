@@ -28,6 +28,7 @@
                 ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================
             </div>
         </nav>
+        
         <div id="main_warning" class="warning" style="visibility: hidden"></div>
         <div style="display:none">
             User Key:
@@ -35,9 +36,7 @@
             <label id="user_id_insecure_note" style="visibility: hidden" class="user-id-insecure-note">(INSECURE, see:
                 <a href="help.html">>help</a>)</label>
         </div>
-        <div>Mode: <label id="mode_ui"></label> (><a id="mode_ui_link" href="a">X</a>)</div>
-        <div id="stats_div">Stats: <label id="stats_label"></label></div>
-        <div id="user_data_div" style="visibility: hidden">Data: <label id="user_data"></label></div>
+
         <main>
             <div class="width-100pc justify-center text-align-center">
                 <p>How far are we?</p>
@@ -53,7 +52,7 @@
                     <label id="progress_bar_answer">&nbsp;</label>
                 </div>
                 <div class="guess_div">
-                    <input type="number" id="guess_input" class="guess-input" step="1" min="0" maxlength="2" max="100"
+                    <input type="number" id="guess_input" pattern="[0-9]*" class="guess-input" step="1" min="0" maxlength="2" max="100"
                         onkeypress="guess_input_onkeypress(event)" />
                     <label class="guess-input-percent">%&nbsp;</label>
                     <button id="guess_button" onclick="on_click_guess()">Try</button>
@@ -65,6 +64,11 @@
             </div>
         </main>
     </div>
+    <footer>
+        <div>Mode: <label id="mode_ui"></label> (><a id="mode_ui_link" href="a">X</a>)</div>
+        <div id="stats_div">Stats: <label id="stats_label"></label></div>
+        <div id="user_data_div" style="visibility: hidden">Data: <label id="user_data"></label></div>        
+    </footer>
 
     <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
@@ -462,16 +466,22 @@
             guess_input.focus();
 
             add_to_table_of_guesses(guessed_percent);
-            document.getElementById("attempt").innerText = data.guesses.length + 1;
-
+            
+            var is_finished = false;
             if (guessed_percent == progress_percent) {
+                is_finished = true;
                 on_finished(true, from_cookie);
             }
             else {
                 if (data.guesses.length >= 3) {
+                    is_finished = true;                    
                     on_finished(false, from_cookie);
                 }
             }
+
+            if(!is_finished)
+                document.getElementById("attempt").innerText = data.guesses.length + 1;
+
         }
 
         // From https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript

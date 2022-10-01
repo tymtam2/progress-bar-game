@@ -135,3 +135,14 @@ a:visited {
 .whitespace-nowrap {
     white-space: nowrap
 }
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 60px;   /* Height of the footer */
+
+    color: white;
+    background-color:rgb(26, 43, 228);
+    font-family: monospace;
+ }
