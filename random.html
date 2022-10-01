@@ -3,7 +3,7 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]>      <html class="no-js"> <![endif]-->
-<html>
+<html style="background-color:rgb(26, 43, 228)"><!-- fighting the on load flash -->
 
 <head>
     <meta charset="utf-8">
@@ -14,9 +14,7 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 
-<body onload="document.body.classList.add('loaded')">
-
-
+<body style="background-color:rgb(26, 43, 228)"><!-- fighting the on load flash -->
     <div class="mono-font">
         <nav>
             <a href="/">/</a>
@@ -65,7 +63,7 @@
         </main>
     </div>
     <footer>
-        <div>Mode: <label id="mode_ui"></label> (><a id="mode_ui_link" href="a">X</a>)</div>
+        <div>Mode: <label id="mode_ui"></label> (<a id="mode_ui_link" href="a">X</a>)</div>
         <div id="stats_div">Stats: <label id="stats_label"></label></div>
         <div id="user_data_div" style="visibility: hidden">Data: <label id="user_data"></label></div>        
     </footer>
@@ -310,7 +308,7 @@
                     change_mode_link.setAttribute('href', 'index.html');
                 }
 
-                change_mode_link.innerText = "daily";
+                change_mode_link.innerText = "/daily";
             }
             else {
                 if (data.stats.daily.last_win_date != new Date().getDate()) {
@@ -327,7 +325,7 @@
                 if (window.location.href.includes("htmlpreview")) {
                     change_mode_link.setAttribute('href', 'random.html');
                 }
-                change_mode_link.innerText = randomModeName;
+                change_mode_link.innerText = '/'+randomModeName;
             }
 
             if (data.guesses != null) {
@@ -338,6 +336,8 @@
             document.getElementById('progress_bar-notfilled').style.width = (100 - progress_percent) + '%';
             var guess_input = document.getElementById('guess_input')
             guess_input.focus();
+
+            document.body.classList.add('loaded');
         }
 
         window.onload = function () { start(); };
