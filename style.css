@@ -44,8 +44,8 @@ a:visited {
 }
 
 .guess-input-percent {
-    afont-size:large;
-    
+    font-size:large;
+    color: pink;
 }
 
 .progress_bar_answer
