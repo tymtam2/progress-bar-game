@@ -5,6 +5,7 @@ body {
 
 .loaded {
   visibility: visible;
+  background-color:rgb(228, 26, 191);
 }
 
 

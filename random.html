@@ -3,18 +3,18 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]>      <html class="no-js"> <![endif]-->
-<html style="background-color:rgb(26, 43, 228)"><!-- fighting the on load flash -->
+<html style="background-color:rgb(26, 43, 228);"><!-- fighting the on load flash -->
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Guess the progress</title>
+    <title>Progress Bar Game</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css" />
 </head>
 
-<body style="background-color:rgb(26, 43, 228)"><!-- fighting the on load flash -->
+<body style="background-color:rgb(26, 43, 228); visibility: hidden;" ><!-- fighting the on load flash -->
     <div class="mono-font">
         <nav>
             <a href="/">/</a>
@@ -59,6 +59,11 @@
                 <table id="guesses_table">
                     <tbody></tbody>
                 </table>
+                <div >
+                    <a style="display: hidden;" id="try_again_now" href=".">Try again</a>
+                    <label style="display: hidden;" id="try_again_tomorrow">Try again tomorrow</label>
+                </div>
+                
             </div>
         </main>
     </div>
@@ -246,6 +251,7 @@
         }
 
         function start() {
+            
             let userPrivateKey = getUserPrivateKey();
 
             if (userPrivateKey.length < 32) {
@@ -337,7 +343,8 @@
             var guess_input = document.getElementById('guess_input')
             guess_input.focus();
 
-            document.body.classList.add('loaded');
+            //document.body.classList.add('loaded'); I cannot make this work
+            document.body.style.visibility = 'visible';
         }
 
         window.onload = function () { start(); };
@@ -377,6 +384,8 @@
                         daily.consecutive_wins = 0;
                         daily.last_was_win = false;
                     }
+                    
+                    document.getElementById('try_again_tomorrow').style.visibility = 'visible';
                 }
                 else { // random
                     var practice = data.stats.practice;
@@ -401,6 +410,8 @@
                         practice.consecutive_wins = 0;
                         practice.last_was_win = false;
                     }
+
+                    document.getElementById('try_again_now').style.visibility = 'visible';
                 }
                 saveData();
                 showStats();
